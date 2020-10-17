@@ -38,9 +38,9 @@ public class Demo extends GameApplication {
 	}
 
 	@Override
-	protected void onUpdate(double time) {
+	protected void onUpdate(double deltaTime) {
 		if (state == null || state == Game.State.Running) {
-			state = game.update();
+			state = game.update(deltaTime);
 			if (state != Game.State.Running) { // The game just ended
 				Text text = new Text(0, 0, (state == Game.State.Won)? "You won!": "You lost.");
 				text.setFont(new Font(30));

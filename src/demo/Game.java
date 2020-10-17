@@ -13,6 +13,8 @@ public class Game {
 	private final List<Block> blocks = new ArrayList<>();
 	private int height;
 	private State state = State.Running;
+	private static final double RELOAD_TIME = 0.25; // 0.25 second
+	private double cooldown = RELOAD_TIME; // How much time is left until the user can fire again
 
 	public Game(int width, int height) {
 		this.height = height;
@@ -34,7 +36,7 @@ public class Game {
 		}
 	}
 
-	public State update() {
+	public State update(double deltaTime) {
 		if (state != State.Running) { // If the game isn't running then we'll just return if we won or lost
 			return state;
 		}
@@ -64,6 +66,9 @@ public class Game {
 		if (blocks.isEmpty()) { // If all the blocks are destroyed, the player wins!
 			state = State.Won;
 		}
+
+		cooldown = Double.max(0, cooldown - deltaTime); // Reduce the cooldown by how much time has passed
+
 		return state;
 	}
 
@@ -85,7 +90,10 @@ public class Game {
 	}
 
 	public void shoot() {
-		bullets.add(new Bullet(player.getX(), player.getY()));
+		if (cooldown <= 0) {
+			bullets.add(new Bullet(player.getX(), player.getY()));
+			cooldown = RELOAD_TIME;
+		}
 	}
 
 	/**
